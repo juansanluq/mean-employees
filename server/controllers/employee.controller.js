@@ -3,8 +3,24 @@ const employeeCtrl = {};
 
 
 employeeCtrl.getEmployees = async(req, res) => {
-    const employees = await Employee.findAll();
-    res.json(employees);
+    Employee.findAll()
+        .then(response => {
+            response.forEach(employee => {
+                Office.findByPk(employee.getDataValue('OfficeId'))
+                    .then(office => {
+                        response.forEach(response => {
+                            res.json({
+                                id: response.getDataValue('id'),
+                                name: response.getDataValue('name'),
+                                position: response.getDataValue('position'),
+                                salary: response.getDataValue('salary'),
+                                nombre_oficina: office.getDataValue('name'),
+                                ubicacion_oficina: office.getDataValue('ubication'),
+                            })
+                        })
+                    })
+            })
+        })
 }
 
 employeeCtrl.createEmployee = async(req, res) => {
